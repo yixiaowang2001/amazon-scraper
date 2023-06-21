@@ -18,7 +18,7 @@ class AsinSpiderSpider(scrapy.Spider):
     }
 
     ASIN_PAGE_LIMIT = 10
-    cate_list = ['keyboard', 'monitor', 'mouse', 'earphone']
+    cate_list = ['monitor']
 
     def start_requests(self):
 

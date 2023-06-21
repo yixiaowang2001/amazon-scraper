@@ -19,11 +19,14 @@ class ReviewSpiderSpider(scrapy.Spider):
         }
     }
 
-    REVIEW_PAGE_LIMIT = 50
+    REVIEW_PAGE_LIMIT = 15
 
     asin_df = pd.read_csv('data/asin_data.csv')
     asin_list = list(asin_df['asin'])
 
+    # main_progress_bar = tqdm(total=REVIEW_PAGE_LIMIT,
+    #                          desc='TOTAL',
+    #                          bar_format='{l_bar}{bar:20}{r_bar}{bar:-10b}')
     def start_requests(self):
 
         for asin in self.asin_list:

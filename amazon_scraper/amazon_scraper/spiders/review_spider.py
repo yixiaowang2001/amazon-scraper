@@ -11,12 +11,12 @@ class ReviewSpiderSpider(scrapy.Spider):
 
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
-        # 'FEEDS': {
-        #     'data/review_data.csv':
-        #         {'format': 'csv',
-        #          'overwrite': True,
-        #          },
-        # }
+        'FEEDS': {
+            'data/review_data.csv':
+                {'format': 'csv',
+                 'overwrite': True,
+                 },
+        }
     }
 
     REVIEW_PAGE_LIMIT = 15

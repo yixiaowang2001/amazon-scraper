@@ -24,8 +24,6 @@ class ReviewSpiderSpider(scrapy.Spider):
     asin_df = pd.read_csv('data/asin_data.csv')
     asin_list = list(asin_df['asin'])
 
-    # asin_list = asin_list[0:1]
-
     def start_requests(self):
 
         for asin in self.asin_list:
@@ -72,7 +70,8 @@ class ReviewSpiderSpider(scrapy.Spider):
                                        'review_page_num': review_page_num,
                                        'progress_bar': progress_bar})
         else:
-            progress_bar.update(progress_bar.total-review_page_num)
+            # progress_bar.update(progress_bar.total-review_page_num)
+            progress_bar.total = review_page_num
 
         # Parse Product Reviews
         review_elements = response.css('#cm_cr-review_list div.review')

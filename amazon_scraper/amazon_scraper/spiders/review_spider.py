@@ -11,12 +11,12 @@ class ReviewSpiderSpider(scrapy.Spider):
 
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
-        'FEEDS': {
-            'data/review_data.csv':
-                {'format': 'csv',
-                 'overwrite': True,
-                 },
-        }
+        # 'FEEDS': {
+        #     'data/review_data.csv':
+        #         {'format': 'csv',
+        #          'overwrite': True,
+        #          },
+        # }
     }
 
     REVIEW_PAGE_LIMIT = 15
@@ -24,37 +24,31 @@ class ReviewSpiderSpider(scrapy.Spider):
     asin_df = pd.read_csv('data/asin_data.csv')
     asin_list = list(asin_df['asin'])
 
-    main_progress_bar = tqdm(total=REVIEW_PAGE_LIMIT*len(asin_list),
-                             desc='TOTAL',
-                             bar_format='{l_bar}{bar:20}{r_bar}{bar:-10b}')
+    # asin_list = asin_list[0:1]
+
     def start_requests(self):
 
         for asin in self.asin_list:
             review_page_num = 0
-            # progress_bar = tqdm(total=self.REVIEW_PAGE_LIMIT,
-            #                     desc=asin,
-            #                     bar_format='{l_bar}{bar:20}{r_bar}{bar:-10b}')
+            progress_bar = tqdm(total=self.REVIEW_PAGE_LIMIT,
+                                desc=asin,
+                                bar_format='{l_bar}{bar:20}{r_bar}{bar:-10b}')
 
             amazon_reviews_url = f'https://www.amazon.com/product-reviews/{asin}/'
-            # yield scrapy.Request(url=amazon_reviews_url,
-            #                      callback=self.parse_reviews,
-            #                      meta={'asin': asin,
-            #                            'review_page_num': review_page_num,
-            #                            'progress_bar': progress_bar})
             yield scrapy.Request(url=amazon_reviews_url,
                                  callback=self.parse_reviews,
                                  meta={'asin': asin,
-                                       'review_page_num': review_page_num})
+                                       'review_page_num': review_page_num,
+                                       'progress_bar': progress_bar})
 
     def parse_reviews(self, response):
 
         asin = response.meta['asin']
         review_page_num = response.meta['review_page_num']
-        # progress_bar = response.meta['progress_bar']
+        progress_bar = response.meta['progress_bar']
 
-        self.main_progress_bar.update(1)
         review_page_num += 1
-        # progress_bar.update(1)
+        progress_bar.update(1)
 
         # Get next page url
         next_page_relative_url = response.css(".a-pagination .a-last>a::attr(href)").get()
@@ -75,7 +69,8 @@ class ReviewSpiderSpider(scrapy.Spider):
             yield scrapy.Request(url=next_url,
                                  callback=self.parse_reviews,
                                  meta={'asin': asin,
-                                       'review_page_num': review_page_num})
+                                       'review_page_num': review_page_num,
+                                       'progress_bar': progress_bar})
 
         # Parse Product Reviews
         review_elements = response.css('#cm_cr-review_list div.review')

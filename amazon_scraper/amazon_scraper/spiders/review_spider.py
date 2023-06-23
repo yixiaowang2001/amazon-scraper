@@ -71,6 +71,8 @@ class ReviewSpiderSpider(scrapy.Spider):
                                  meta={'asin': asin,
                                        'review_page_num': review_page_num,
                                        'progress_bar': progress_bar})
+        else:
+            progress_bar.update(progress_bar.total-review_page_num)
 
         # Parse Product Reviews
         review_elements = response.css('#cm_cr-review_list div.review')
